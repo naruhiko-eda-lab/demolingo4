@@ -1,8 +1,8 @@
-let score = 0; 
+let score = 0;
 let currentIndex = 0;
 let selectedOption = null;
 let state = 'question';
-let missedQuestions = []; 
+let missedQuestions = [];
 let originalTotalQuestions = 0; // ★最初の問題数を保存する変数
 
 const quizData = [
@@ -23,8 +23,8 @@ const quizData = [
     { id: 15, kanji: "いい（よい）", furigana: "いい", options: ["好", "坏", "贵", "便宜"], correctAnswer: "好" },
     { id: 16, kanji: "わるい", furigana: "わるい", options: ["坏", "好", "难", "容易"], correctAnswer: "坏" },
     { id: 17, kanji: "あつい", furigana: "あつい", options: ["热", "冷", "凉爽", "暖和"], correctAnswer: "热" },
-    { id: 18, kanji: "さむい", furigana: "さむい", options: ["冷", "热", "凉爽", "忙"], correctAnswer: "冷" },
-    { id: 19, kanji: "つめたい", furigana: "つめたい", options: ["冰、凉", "冷", "热", "辣"], correctAnswer: "冰、凉" },
+    { id: 18, kanji: "さむい", furigana: "さむい", options: ["冷 (天气)", "热", "凉快", "忙"], correctAnswer: "冷 (天气)" },
+    { id: 19, kanji: "つめたい", furigana: "つめたい", options: ["冰、凉 (水、手等)", "冷 (天气)", "热", "辣"], correctAnswer: "冰、凉 (水、手等)" },
     { id: 20, kanji: "むずかしい", furigana: "むずかしい", options: ["难", "容易", "便宜", "贵"], correctAnswer: "难" },
     { id: 21, kanji: "やさしい", furigana: "やさしい", options: ["容易", "难", "低", "忙"], correctAnswer: "容易" },
     { id: 22, kanji: "たかい", furigana: "たかい", options: ["贵、高", "便宜、低", "新", "长"], correctAnswer: "贵、高" },
@@ -70,7 +70,7 @@ function initAudio() {
 
 function speakText(text, lang = 'zh-CN') {
     if (!text) return;
-    window.speechSynthesis.cancel(); 
+    window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = lang;
     if (lang.includes('ja')) utterance.rate = 0.85;
@@ -84,7 +84,7 @@ function speakText(text, lang = 'zh-CN') {
 
 function renderQuestion() {
     const question = quizData[currentIndex];
-    
+
     // ★ 78行目付近：進捗バーを最後まで届くように修正
     const progress = ((currentIndex + 1) / quizData.length) * 100;
     elements.progressBar.style.width = `${progress}%`;
@@ -107,7 +107,7 @@ function renderQuestion() {
             btn.classList.add('selected');
             selectedOption = opt;
             elements.actionBtn.disabled = false;
-            speakText(opt, 'zh-CN'); 
+            speakText(opt, 'zh-CN');
         });
         elements.optionsGrid.appendChild(btn);
     });
@@ -126,11 +126,11 @@ function handleBtnClick() {
 function checkAnswer() {
     const question = quizData[currentIndex];
     const isCorrect = selectedOption === question.correctAnswer;
-    const feedbackImg = document.getElementById('feedback-img'); 
+    const feedbackImg = document.getElementById('feedback-img');
 
     state = 'feedback';
     elements.feedbackContainer.classList.remove('hidden');
-    elements.actionBtn.textContent = '继续'; 
+    elements.actionBtn.textContent = '继续';
 
     Array.from(elements.optionsGrid.children).forEach(btn => btn.classList.add('disabled'));
 
@@ -155,7 +155,7 @@ function checkAnswer() {
 function handleAction() {
     if (state === 'feedback') {
         currentIndex++;
-        
+
         // ★ 休憩判定：全問題数が「最初の数」と同じ、かつ「中間」の時だけ出す（解き直し時は出さない）
         if (quizData.length === originalTotalQuestions && currentIndex === BREAK_POINT) {
             showBreakScreen();
@@ -174,7 +174,7 @@ function handleAction() {
 
 function showBreakScreen() {
     state = 'break';
-    elements.optionsGrid.innerHTML = ''; 
+    elements.optionsGrid.innerHTML = '';
     elements.kanji.textContent = "休息時間";
     elements.furigana.textContent = "がんばっているね！";
     const feedbackImg = document.getElementById('feedback-img');
@@ -190,7 +190,7 @@ function showFinalResult() {
     elements.furigana.textContent = `正解数: ${score} / ${quizData.length}`;
     const percent = Math.round((score / quizData.length) * 100);
     elements.feedbackTitle.textContent = `あなたのスコアは ${percent}点 です！`;
-    
+
     if (missedQuestions.length > 0) {
         elements.actionBtn.textContent = `間違えた ${missedQuestions.length} 問を解き直す`;
         elements.actionBtn.onclick = () => retryMissedQuestions();
@@ -198,22 +198,22 @@ function showFinalResult() {
         elements.actionBtn.textContent = '最初から挑戦する';
         elements.actionBtn.onclick = () => location.reload();
     }
-    
+
     elements.feedbackContainer.classList.remove('hidden');
 }
 
 function retryMissedQuestions() {
-    quizData.splice(0, quizData.length, ...missedQuestions); 
-    missedQuestions = []; 
+    quizData.splice(0, quizData.length, ...missedQuestions);
+    missedQuestions = [];
     currentIndex = 0;
     score = 0;
     state = 'question';
     renderQuestion();
-    elements.actionBtn.onclick = null; 
+    elements.actionBtn.onclick = null;
 }
 
-function playCorrectSound() { new Audio('sounds/correct.mp3').play().catch(() => {}); }
-function playIncorrectSound() { new Audio('sounds/incorrect.mp3').play().catch(() => {}); }
+function playCorrectSound() { new Audio('sounds/correct.mp3').play().catch(() => { }); }
+function playIncorrectSound() { new Audio('sounds/incorrect.mp3').play().catch(() => { }); }
 
 function resetFooter() {
     elements.footer.classList.remove('correct', 'incorrect');
@@ -225,8 +225,8 @@ function resetFooter() {
 function init() {
     // ★ 起動時の問題数を保存
     originalTotalQuestions = quizData.length;
-    
-    quizData.sort(() => Math.random() - 0.5); 
+
+    quizData.sort(() => Math.random() - 0.5);
     currentIndex = 0;
     score = 0;
     missedQuestions = [];
@@ -238,7 +238,7 @@ function init() {
     if (closeBtn) {
         closeBtn.addEventListener('click', () => {
             if (confirm('最初に戻りますか？')) {
-                location.reload(); 
+                location.reload();
             }
         });
     }
