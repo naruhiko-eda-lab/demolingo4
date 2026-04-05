@@ -39,15 +39,15 @@ const quizDataGroups = {
         { id: 3, kanji: "まち", furigana: "まち", options: ["城镇、街道", "村庄", "家", "学校"], correctAnswer: "城镇、街道" },
         { id: 4, kanji: "たべもの", furigana: "たべもの", options: ["食物", "饮料", "礼物", "东西"], correctAnswer: "食物" },
         { id: 5, kanji: "ところ", furigana: "ところ", options: ["场所、地方", "宿舍", "餐厅", "学校"], correctAnswer: "场所、地方" },
-        { id: 6, kanji: "りょう", furigana: "りょう", options: ["宿舍", "场所", "餐厅", "家"], correctAnswer: "宿舍" },
+        { id: 6, kanji: "りょう", furigana: "りょう", options: ["宿舍", "場所", "餐厅", "家"], correctAnswer: "宿舍" },
         { id: 7, kanji: "レストラン", furigana: "レストラン", options: ["餐厅", "咖啡馆", "超市", "宿舍"], correctAnswer: "餐厅" },
-        { id: 8, kanji: "せいかつ", furigana: "せいかつ", options: ["生活", "工作", "学习", "旅行"], correctAnswer: "生活" },
+        { id: 8, kanji: "せいかつ", furigana: "せいかつ", options: ["生活", "工作", "学習", "旅行"], correctAnswer: "生活" },
         { id: 9, kanji: "[お]しごと", furigana: "しごと", options: ["工作、职业", "生活", "趣味", "运动"], correctAnswer: "工作、职业" },
         { id: 10, kanji: "どう", furigana: "どう", options: ["怎么样", "什么样的", "哪个", "为什么"], correctAnswer: "怎么样" },
         { id: 11, kanji: "どんな〜", furigana: "どんな", options: ["什么样的", "怎么样", "哪个", "谁の"], correctAnswer: "什么样的" },
         { id: 12, kanji: "とても", furigana: "とても", options: ["非常、很", "不怎么", "稍微", "总是"], correctAnswer: "非常、很" },
         { id: 13, kanji: "あまり", furigana: "あまり", options: ["不怎么（与否定连用）", "非常", "总是", "有时候"], correctAnswer: "不怎么（与否定连用）" },
-        { id: 14, kanji: "そして", furigana: "そして", options: ["而且、然后", "但是", "所以", "因为"], correctAnswer: "しかも・それから" },
+        { id: 14, kanji: "そして", furigana: "そして", options: ["而且、然后", "但是", "所以", "因为"], correctAnswer: "而且、然后" },
         { id: 15, kanji: "〜が、〜", furigana: "〜が、〜", options: ["〜，但是〜", "〜，而且〜", "〜，所以〜", "〜，然后〜"], correctAnswer: "〜，但是〜" },
         { id: 16, kanji: "お元気ですか", furigana: "おげんきですか", options: ["你好吗？", "再见", "对不起", "谢谢"], correctAnswer: "你好吗？" },
         { id: 17, kanji: "そうですね", furigana: "そうですね", options: ["是啊（赞同）", "不是", "不知道", "为什么"], correctAnswer: "是啊（赞同）" },
@@ -55,13 +55,10 @@ const quizDataGroups = {
         { id: 19, kanji: "いいえ、けっこうです", furigana: "けっけうです", options: ["不，不用了", "是的，请", "好的", "没关系"], correctAnswer: "不，不用了" },
         { id: 20, kanji: "そろそろ失礼します", furigana: "しつれいします", options: ["我该告辞了", "初次见面", "谢谢", "请多关照"], correctAnswer: "我该告辞了" },
         { id: 21, kanji: "いいえ", furigana: "いいえ", options: ["不、没什么", "是的", "请", "谢谢"], correctAnswer: "不、没什么" },
-        { id: 22, kanji: "またいらっしゃってください", furigana: "いらっしゃってください", options: ["欢迎下次再来", "请进", "请慢用", "告辞了"], correctAnswer: "欢迎下次再来" }
+        { id: 22, kanji: "またいらっしゃってください", furigana: "いらっしゃってください", options: ["欢迎下次再来", "请進", "请慢用", "告辞了"], correctAnswer: "欢迎下次再来" }
     ]
 };
 
-// -------------------------------------------------------------------
-// メインロジック
-// -------------------------------------------------------------------
 let currentGroup = 'adjectives';
 let quizData = [...quizDataGroups[currentGroup]];
 let currentIndex = 0;
@@ -74,14 +71,10 @@ const optionsGrid = document.getElementById('options-grid');
 const progressBar = document.getElementById('progress-bar');
 const actionBtn = document.getElementById('action-btn');
 
-// 音声再生用の関数
-function playSound(isCorrect) {
-    const soundId = isCorrect ? 'correct-sound' : 'wrong-sound';
-    const sound = document.getElementById(soundId);
-    if (sound) {
-        sound.currentTime = 0; // 最初から再生
-        sound.play().catch(e => console.log("Audio play failed"));
-    }
+// 音声をファイルから直接生成して再生する関数
+function playAudio(fileName) {
+    const audio = new Audio(`sounds/${fileName}.mp3`);
+    audio.play().catch(e => console.log("再生エラー:", e));
 }
 
 function init() {
@@ -118,13 +111,11 @@ function render() {
 }
 
 actionBtn.onclick = () => {
-    // 答え合わせの時に音を鳴らす
-    const isCorrect = (selected === quizData[currentIndex].correctAnswer);
-    if (isCorrect) {
+    if (selected === quizData[currentIndex].correctAnswer) {
         score++;
-        playSound(true);
+        playAudio('correct'); // correct.mp3を再生
     } else {
-        playSound(false);
+        playAudio('wrong');   // wrong.mp3を再生
     }
 
     currentIndex++;
@@ -150,17 +141,15 @@ function finish() {
 }
 
 window.swap = function(group) {
-    // グループ名を保存して再読み込み（次の範囲を表示するため）
     localStorage.setItem('selectedGroup', group);
     location.reload();
 }
 
-// 読み込み時にグループを確認
 const savedGroup = localStorage.getItem('selectedGroup');
 if (savedGroup) {
     currentGroup = savedGroup;
     quizData = [...quizDataGroups[currentGroup]];
-    localStorage.removeItem('selectedGroup'); // 使い終わったら消す
+    localStorage.removeItem('selectedGroup');
 }
 
 init();
