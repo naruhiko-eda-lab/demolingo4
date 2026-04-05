@@ -60,9 +60,10 @@ const quizDataGroups = {
     ]
 };
 
-// --- グローバル変数 ---
-let currentGroupName = localStorage.getItem('selectedGroup') || 'adjectives';
-let quizData = [...quizDataGroups[currentGroupName]];
+// --- 仕組みの部分：ここから下を貼り付け ---
+
+let currentGroupName = localStorage.getItem('selectedGroup') || null;
+let quizData = currentGroupName ? [...quizDataGroups[currentGroupName]] : [];
 let score = 0; 
 let currentIndex = 0;
 let selectedOption = null;
@@ -85,7 +86,6 @@ const elements = {
     audioBtn: document.getElementById('audio-btn')
 };
 
-// --- 音声関連 ---
 let audioCtx = null;
 function initAudio() {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -97,7 +97,7 @@ function speakText(text, lang = 'zh-CN') {
     window.speechSynthesis.cancel(); 
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = lang;
-    if (lang.includes('ja')) utterance.rate = 0.85; // 日本語は少しゆっくり
+    if (lang.includes('ja')) utterance.rate = 0.85;
 
     const voices = window.speechSynthesis.getVoices();
     let targetVoice = voices.find(v => v.lang === lang && (v.name.includes('Google') || v.name.includes('Premium')));
@@ -106,8 +106,13 @@ function speakText(text, lang = 'zh-CN') {
     window.speechSynthesis.speak(utterance);
 }
 
-// --- クイズロジック ---
 function renderQuestion() {
+    // 選択画面を隠してクイズ内容を出す
+    const selector = document.getElementById('range-selector');
+    const content = document.getElementById('quiz-content');
+    if (selector) selector.style.display = 'none';
+    if (content) content.classList.remove('hidden');
+
     const question = quizData[currentIndex];
     const progress = ((currentIndex + 1) / quizData.length) * 100;
     elements.progressBar.style.width = `${progress}%`;
@@ -118,7 +123,6 @@ function renderQuestion() {
     selectedOption = null;
     resetFooter();
 
-    // 出題時に自動読み上げ
     speakText(question.furigana, 'ja-JP');
 
     const shuffledOptions = [...question.options].sort(() => Math.random() - 0.5);
@@ -133,11 +137,20 @@ function renderQuestion() {
             btn.classList.add('selected');
             selectedOption = opt;
             elements.actionBtn.disabled = false;
-            speakText(opt, 'zh-CN'); // 選択肢（中国語）読み上げ
+            speakText(opt, 'zh-CN'); 
         });
         elements.optionsGrid.appendChild(btn);
     });
     state = 'answering';
+}
+
+function handleAction() {
+    initAudio();
+    if (state === 'answering') {
+        checkAnswer();
+    } else {
+        handleNext();
+    }
 }
 
 function checkAnswer() {
@@ -168,10 +181,8 @@ function checkAnswer() {
     }
 }
 
-function handleAction() {
-    if (state === 'answering') {
-        checkAnswer();
-    } else if (state === 'feedback') {
+function handleNext() {
+    if (state === 'feedback') {
         currentIndex++;
         const BREAK_POINT = Math.floor(originalTotalQuestions / 2);
         if (quizData.length === originalTotalQuestions && currentIndex === BREAK_POINT) {
@@ -220,8 +231,12 @@ function showFinalResult() {
         elements.actionBtn.onclick = () => retryMissedQuestions();
     } else {
         elements.actionBtn.textContent = 'もう一度最初から';
-        elements.actionBtn.onclick = () => location.reload();
+        elements.actionBtn.onclick = () => {
+            localStorage.removeItem('selectedGroup');
+            location.reload();
+        };
     }
+    elements.feedbackContainer.classList.remove('hidden');
 }
 
 window.swapRange = function(group) {
@@ -246,17 +261,29 @@ function resetFooter() {
 }
 
 function init() {
-    originalTotalQuestions = quizData.length;
-    quizData.sort(() => Math.random() - 0.5); 
-    renderQuestion();
+    const savedGroup = localStorage.getItem('selectedGroup');
+    
+    if (savedGroup) {
+        currentGroupName = savedGroup;
+        quizData = [...quizDataGroups[currentGroupName]];
+        originalTotalQuestions = quizData.length;
+        quizData.sort(() => Math.random() - 0.5); 
+        renderQuestion();
+    } else {
+        // 最初は選択画面を出し、問題を隠す
+        const selector = document.getElementById('range-selector');
+        const content = document.getElementById('quiz-content');
+        if (selector) selector.style.display = 'block';
+        if (content) content.classList.add('hidden');
+        elements.progressBar.style.width = '0%';
+    }
 
     elements.actionBtn.addEventListener('click', handleAction);
 
-    // ✕ボタンの修正
     const closeBtn = document.querySelector('.close-btn');
     if (closeBtn) {
         closeBtn.onclick = () => {
-            if (confirm('最初に戻りますか？')) {
+            if (confirm('確定要返回範囲選択画面嗎？')) {
                 localStorage.removeItem('selectedGroup');
                 location.reload(); 
             }
