@@ -1,3 +1,4 @@
+// --- 第8課 データを2つのグループに分けます ---
 const quizDataGroups = {
     adjectives: [
         { id: 1, kanji: "ハンサム[な]", furigana: "ハンサム", options: ["英俊、帅气", "亲切", "有名", "漂亮"], correctAnswer: "英俊、帅气" },
@@ -48,9 +49,9 @@ const quizDataGroups = {
         { id: 12, kanji: "とても", furigana: "とても", options: ["非常、很", "不怎么", "稍微", "总是"], correctAnswer: "非常、很" },
         { id: 13, kanji: "あまり", furigana: "あまり", options: ["不怎么（与否定连用）", "非常", "总是", "有时候"], correctAnswer: "不怎么（与否定连用）" },
         { id: 14, kanji: "そして", furigana: "そして", options: ["しかも・それから", "但是", "所以", "因为"], correctAnswer: "しかも・それから" },
-        { id: 15, kanji: "〜が、〜", furigana: "〜が、〜", options: ["〜，但是〜", "〜，而且〜", "〜，所以〜", "〜，然后〜"], correctAnswer: "〜，但是〜" },
+        { id: 15, kanji: "〜が、〜", furigana: "〜が、〜", options: ["〜，但是〜", "〜，しかも〜", "〜，だから〜", "〜，それから〜"], correctAnswer: "〜，但是〜" },
         { id: 16, kanji: "お元気ですか", furigana: "おげんきですか", options: ["你好吗？", "再见", "对不起", "谢谢"], correctAnswer: "你好吗？" },
-        { id: 17, kanji: "そうですね", furigana: "そうですね", options: ["是啊（赞同）", "不是", "不知道", "为什么"], correctAnswer: "はあ（赞同）" },
+        { id: 17, kanji: "そうですね", furigana: "そうですね", options: ["是啊（赞同）", "不是", "不知道", "为什么"], correctAnswer: "是啊（赞同）" },
         { id: 18, kanji: "もう一杯いかがですか", furigana: "いかがですか", options: ["再来一杯怎么样？", "好久不见", "我不吃了", "请進"], correctAnswer: "再来一杯怎么样？" },
         { id: 19, kanji: "いいえ、けっこうです", furigana: "けっけうです", options: ["不，不用了", "是的，请", "好的", "没关系"], correctAnswer: "不，不用了" },
         { id: 20, kanji: "そろそろ失礼します", furigana: "しつれいします", options: ["我该告辞了", "初次见面", "谢谢", "请多关照"], correctAnswer: "我该告辞了" },
@@ -59,116 +60,214 @@ const quizDataGroups = {
     ]
 };
 
-let currentGroup = 'adjectives';
-let quizData = [...quizDataGroups[currentGroup]];
+// --- グローバル変数 ---
+let currentGroupName = localStorage.getItem('selectedGroup') || 'adjectives';
+let quizData = [...quizDataGroups[currentGroupName]];
+let score = 0; 
 let currentIndex = 0;
-let score = 0;
-let selected = null;
+let selectedOption = null;
+let state = 'answering';
+let missedQuestions = []; 
+let originalTotalQuestions = 0;
 
-const kanjiText = document.getElementById('kanji');
-const furiganaText = document.getElementById('furigana');
-const optionsGrid = document.getElementById('options-grid');
-const progressBar = document.getElementById('progress-bar');
-const actionBtn = document.getElementById('action-btn');
-const audioBtn = document.getElementById('audio-btn');
+const elements = {
+    progressBar: document.getElementById('progress-bar'),
+    quizArea: document.getElementById('quiz-area'),
+    resultsArea: document.getElementById('results-area'),
+    kanji: document.getElementById('kanji'),
+    furigana: document.getElementById('furigana'),
+    optionsGrid: document.getElementById('options-grid'),
+    actionBtn: document.getElementById('action-btn'),
+    footer: document.getElementById('footer'),
+    feedbackContainer: document.getElementById('feedback-container'),
+    feedbackTitle: document.getElementById('feedback-title'),
+    feedbackCorrectAnswer: document.getElementById('feedback-correct-answer'),
+    audioBtn: document.getElementById('audio-btn')
+};
 
-// --- 読み上げ機能 ---
-function speak(text) {
-    window.speechSynthesis.cancel(); // 前の音声を止める
-    const uttr = new SpeechSynthesisUtterance(text);
-    uttr.lang = 'ja-JP';
-    window.speechSynthesis.speak(uttr);
+// --- 音声関連 ---
+let audioCtx = null;
+function initAudio() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
 }
 
-// --- 効果音再生 ---
-function playAudio(fileName) {
-    const audio = new Audio(`sounds/${fileName}.mp3`);
-    audio.play().catch(e => console.log("SE再生エラー:", e));
+function speakText(text, lang = 'zh-CN') {
+    if (!text) return;
+    window.speechSynthesis.cancel(); 
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = lang;
+    if (lang.includes('ja')) utterance.rate = 0.85; // 日本語は少しゆっくり
+
+    const voices = window.speechSynthesis.getVoices();
+    let targetVoice = voices.find(v => v.lang === lang && (v.name.includes('Google') || v.name.includes('Premium')));
+    if (!targetVoice) targetVoice = voices.find(v => v.lang.includes(lang));
+    if (targetVoice) utterance.voice = targetVoice;
+    window.speechSynthesis.speak(utterance);
 }
 
-function init() {
-    currentIndex = 0;
-    score = 0;
-    render();
-}
+// --- クイズロジック ---
+function renderQuestion() {
+    const question = quizData[currentIndex];
+    const progress = ((currentIndex + 1) / quizData.length) * 100;
+    elements.progressBar.style.width = `${progress}%`;
 
-function render() {
-    selected = null;
-    actionBtn.disabled = true;
-    actionBtn.textContent = "检查";
-    
-    const q = quizData[currentIndex];
-    kanjiText.textContent = q.kanji;
-    furiganaText.textContent = q.furigana;
-    
-    // 【自動読み上げ】問題が出た時に喋る
-    speak(q.furigana);
-    
-    optionsGrid.innerHTML = '';
-    q.options.forEach(opt => {
+    elements.kanji.textContent = question.kanji;
+    elements.furigana.textContent = question.furigana;
+    elements.optionsGrid.innerHTML = '';
+    selectedOption = null;
+    resetFooter();
+
+    // 出題時に自動読み上げ
+    speakText(question.furigana, 'ja-JP');
+
+    const shuffledOptions = [...question.options].sort(() => Math.random() - 0.5);
+    shuffledOptions.forEach(opt => {
         const btn = document.createElement('button');
         btn.className = 'option-btn';
         btn.textContent = opt;
-        btn.onclick = () => {
-            document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+        btn.addEventListener('click', () => {
+            if (state !== 'answering') return;
+            initAudio();
+            Array.from(elements.optionsGrid.children).forEach(b => b.classList.remove('selected'));
             btn.classList.add('selected');
-            selected = opt;
-            actionBtn.disabled = false;
-        };
-        optionsGrid.appendChild(btn);
+            selectedOption = opt;
+            elements.actionBtn.disabled = false;
+            speakText(opt, 'zh-CN'); // 選択肢（中国語）読み上げ
+        });
+        elements.optionsGrid.appendChild(btn);
     });
-    
-    const progress = (currentIndex / quizData.length) * 100;
-    progressBar.style.width = `${progress}%`;
+    state = 'answering';
 }
 
-// 【スピーカーボタン】押した時に喋る
-if (audioBtn) {
-    audioBtn.onclick = () => {
-        speak(quizData[currentIndex].furigana);
-    };
-}
+function checkAnswer() {
+    const question = quizData[currentIndex];
+    const isCorrect = selectedOption === question.correctAnswer;
+    const feedbackImg = document.getElementById('feedback-img'); 
 
-actionBtn.onclick = () => {
-    if (selected === quizData[currentIndex].correctAnswer) {
+    state = 'feedback';
+    elements.feedbackContainer.classList.remove('hidden');
+    elements.actionBtn.textContent = '继续'; 
+    Array.from(elements.optionsGrid.children).forEach(btn => btn.classList.add('disabled'));
+
+    if (isCorrect) {
         score++;
-        playAudio('correct');
+        elements.footer.classList.add('correct');
+        elements.feedbackTitle.textContent = '太棒了！';
+        elements.feedbackCorrectAnswer.classList.add('hidden');
+        if (feedbackImg) feedbackImg.src = 'images/correct.png';
+        new Audio('sounds/correct.mp3').play().catch(() => {});
     } else {
-        playAudio('wrong');
+        missedQuestions.push(question);
+        elements.footer.classList.add('incorrect');
+        elements.feedbackTitle.textContent = '不正确。';
+        elements.feedbackCorrectAnswer.querySelector('span').textContent = question.correctAnswer;
+        elements.feedbackCorrectAnswer.classList.remove('hidden');
+        if (feedbackImg) feedbackImg.src = 'images/incorrect.png';
+        new Audio('sounds/wrong.mp3').play().catch(() => {});
     }
-
-    currentIndex++;
-    if (currentIndex < quizData.length) {
-        render();
-    } else {
-        finish();
-    }
-};
-
-function finish() {
-    const nextGroup = (currentGroup === 'adjectives') ? 'others' : 'adjectives';
-    const nextLabel = (currentGroup === 'adjectives') ? '名詞・副詞・会話' : '形容詞';
-    
-    document.getElementById('quiz-area').innerHTML = `
-        <div style="text-align:center; padding: 50px 20px;">
-            <h2 style="font-size: 24px; color: #58cc02;">学习完了！</h2>
-            <p style="font-size: 18px; margin: 20px 0;">${quizData.length}个单词中答对了 ${score}个。</p>
-            <button class="action-btn" style="margin-bottom: 10px;" onclick="location.reload()">再做一次</button>
-            <button class="action-btn" style="background:#58cc02; border-bottom: 4px solid #46a302;" onclick="swap('${nextGroup}')">挑战「${nextLabel}」</button>
-        </div>
-    `;
 }
 
-window.swap = function(group) {
+function handleAction() {
+    if (state === 'answering') {
+        checkAnswer();
+    } else if (state === 'feedback') {
+        currentIndex++;
+        const BREAK_POINT = Math.floor(originalTotalQuestions / 2);
+        if (quizData.length === originalTotalQuestions && currentIndex === BREAK_POINT) {
+            showBreakScreen();
+            return;
+        }
+        if (currentIndex < quizData.length) {
+            renderQuestion();
+        } else {
+            showFinalResult();
+        }
+    } else if (state === 'break') {
+        renderQuestion();
+    }
+}
+
+function showBreakScreen() {
+    state = 'break';
+    elements.optionsGrid.innerHTML = ''; 
+    elements.kanji.textContent = "休憩時間";
+    elements.furigana.textContent = "加油！加油！";
+    const feedbackImg = document.getElementById('feedback-img');
+    if (feedbackImg) feedbackImg.src = 'images/break.png';
+    elements.feedbackTitle.textContent = "おつかれさま！ちょっとひと休み。";
+    elements.actionBtn.textContent = '再開する';
+}
+
+function showFinalResult() {
+    state = 'finished';
+    elements.optionsGrid.innerHTML = '';
+    elements.kanji.textContent = "🎉 学習完了！";
+    elements.furigana.textContent = `正解数: ${score} / ${quizData.length}`;
+    
+    const nextGroup = (currentGroupName === 'adjectives') ? 'others' : 'adjectives';
+    const nextLabel = (currentGroupName === 'adjectives') ? '名詞・副詞・会話' : '形容詞';
+
+    elements.feedbackTitle.innerHTML = `
+        お疲れ様でした！<br>
+        <button class="action-btn" style="margin-top:20px; background:#58cc02; border-bottom: 4px solid #46a302;" onclick="swapRange('${nextGroup}')">
+            次は「${nextLabel}」に挑戦
+        </button>
+    `;
+    
+    if (missedQuestions.length > 0) {
+        elements.actionBtn.textContent = `間違えた ${missedQuestions.length} 問を解き直す`;
+        elements.actionBtn.onclick = () => retryMissedQuestions();
+    } else {
+        elements.actionBtn.textContent = 'もう一度最初から';
+        elements.actionBtn.onclick = () => location.reload();
+    }
+}
+
+window.swapRange = function(group) {
     localStorage.setItem('selectedGroup', group);
     location.reload();
 }
 
-const savedGroup = localStorage.getItem('selectedGroup');
-if (savedGroup) {
-    currentGroup = savedGroup;
-    quizData = [...quizDataGroups[currentGroup]];
-    localStorage.removeItem('selectedGroup');
+function retryMissedQuestions() {
+    quizData = [...missedQuestions];
+    missedQuestions = []; 
+    currentIndex = 0;
+    score = 0;
+    renderQuestion();
+    elements.actionBtn.onclick = null; 
 }
 
-init();
+function resetFooter() {
+    elements.footer.classList.remove('correct', 'incorrect');
+    elements.feedbackContainer.classList.add('hidden');
+    elements.actionBtn.textContent = '检查';
+    elements.actionBtn.disabled = true;
+}
+
+function init() {
+    originalTotalQuestions = quizData.length;
+    quizData.sort(() => Math.random() - 0.5); 
+    renderQuestion();
+
+    elements.actionBtn.addEventListener('click', handleAction);
+
+    // ✕ボタンの修正
+    const closeBtn = document.querySelector('.close-btn');
+    if (closeBtn) {
+        closeBtn.onclick = () => {
+            if (confirm('最初に戻りますか？')) {
+                localStorage.removeItem('selectedGroup');
+                location.reload(); 
+            }
+        };
+    }
+
+    elements.audioBtn.addEventListener('click', () => {
+        initAudio();
+        const text = (state === 'break') ? "加油！加油！" : quizData[currentIndex].furigana;
+        speakText(text, 'ja-JP');
+    });
+}
+
+document.addEventListener('DOMContentLoaded', init);
