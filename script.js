@@ -53,7 +53,7 @@ const quizDataGroups = {
         { id: 16, kanji: "お元気ですか", furigana: "おげんきですか", options: ["你好吗？", "再见", "对不起", "谢谢"], correctAnswer: "你好吗？" },
         { id: 17, kanji: "そうですね", furigana: "そうですね", options: ["是啊（赞同）", "不是", "不知道", "为什么"], correctAnswer: "是啊（赞同）" },
         { id: 18, kanji: "もう一杯いかがですか", furigana: "いかがですか", options: ["再来一杯怎么样？", "好久不见", "我不吃了", "请進"], correctAnswer: "再来一杯怎么样？" },
-        { id: 19, kanji: "いいえ、けっこうです", furigana: "けっけうです", options: ["不，不用了", "是的，请", "好的", "没关系"], correctAnswer: "不，不用了" },
+        { id: 19, kanji: "いいえ、けっこうです", furigana: "けっこうです", options: ["不，不用了", "是的，请", "好的", "没关系"], correctAnswer: "不，不用了" },
         { id: 20, kanji: "そろそろ失礼します", furigana: "しつれいします", options: ["我该告辞了", "初次见面", "谢谢", "请多关照"], correctAnswer: "我该告辞了" },
         { id: 21, kanji: "いいえ", furigana: "いいえ", options: ["不、没什么", "是的", "请", "谢谢"], correctAnswer: "不、没什么" },
         { id: 22, kanji: "またいらっしゃってください", furigana: "いらっしゃってください", options: ["欢迎下次再来", "请進", "请慢用", "告辞了"], correctAnswer: "欢迎下次再来" }
