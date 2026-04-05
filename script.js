@@ -44,111 +44,99 @@ const quizDataGroups = {
         { id: 8, kanji: "せいかつ", furigana: "せいかつ", options: ["生活", "工作", "学习", "旅行"], correctAnswer: "生活" },
         { id: 9, kanji: "[お]しごと", furigana: "しごと", options: ["工作、职业", "生活", "趣味", "运动"], correctAnswer: "工作、职业" },
         { id: 10, kanji: "どう", furigana: "どう", options: ["怎么样", "什么样的", "哪个", "为什么"], correctAnswer: "怎么样" },
-        { id: 11, kanji: "どんな〜", furigana: "どんな", options: ["什么样的", "怎么样", "哪个", "谁的"], correctAnswer: "什么样的" },
+        { id: 11, kanji: "どんな〜", furigana: "どんな", options: ["什么样的", "怎么样", "哪个", "谁の"], correctAnswer: "什么样的" },
         { id: 12, kanji: "とても", furigana: "とても", options: ["非常、很", "不怎么", "稍微", "总是"], correctAnswer: "非常、很" },
         { id: 13, kanji: "あまり", furigana: "あまり", options: ["不怎么（与否定连用）", "非常", "总是", "有时候"], correctAnswer: "不怎么（与否定连用）" },
         { id: 14, kanji: "そして", furigana: "そして", options: ["而且、然后", "但是", "所以", "因为"], correctAnswer: "而且、然后" },
-        { id: 15, kanji: "〜が、〜", furigana: "〜が、〜", options: ["〜，但是〜", "〜，しかも〜", "〜，だから〜", "〜，それから〜"], correctAnswer: "〜，但是〜" },
+        { id: 15, kanji: "〜が、〜", furigana: "〜が、〜", options: ["〜，但是〜", "〜，而且〜", "〜，所以〜", "〜，然后〜"], correctAnswer: "〜，但是〜" },
         { id: 16, kanji: "お元気ですか", furigana: "おげんきですか", options: ["你好吗？", "再见", "对不起", "谢谢"], correctAnswer: "你好吗？" },
-        { id: 17, kanji: "そうですね", furigana: "そうですね", options: ["是啊（赞同）", "不是", "不知道", "为什么"], correctAnswer: "是啊（赞同）" },
+        { id: 17, kanji: "そうですね", furigana: "そうですね", options: ["是啊（赞同）", "不是", "不知道", "为什么"], correctAnswer: "はあ（赞同）" },
         { id: 18, kanji: "もう一杯いかがですか", furigana: "いかがですか", options: ["再来一杯怎么样？", "好久不见", "我不吃了", "请进"], correctAnswer: "再来一杯怎么样？" },
-        { id: 19, kanji: "いいえ、けっこうです", furigana: "けっこうです", options: ["不，不用了", "是的，请", "好的", "没关系"], correctAnswer: "不，不用了" },
+        { id: 19, kanji: "いいえ、けっこうです", furigana: "けっけうです", options: ["不，不用了", "是的，请", "好的", "没关系"], correctAnswer: "不，不用了" },
         { id: 20, kanji: "そろそろ失礼します", furigana: "しつれいします", options: ["我该告辞了", "初次见面", "谢谢", "请多关照"], correctAnswer: "我该告辞了" },
         { id: 21, kanji: "いいえ", furigana: "いいえ", options: ["不、没什么", "是的", "请", "谢谢"], correctAnswer: "不、没什么" },
         { id: 22, kanji: "またいらっしゃってください", furigana: "いらっしゃってください", options: ["欢迎下次再来", "请进", "请慢用", "告辞了"], correctAnswer: "欢迎下次再来" }
     ]
 };
 
+// -------------------------------------------------------------------
+// HTMLのIDに合わせて正確に設定
+// -------------------------------------------------------------------
 let currentGroup = 'adjectives';
 let quizData = [...quizDataGroups[currentGroup]];
-let currentQuestionIndex = 0;
+let currentIndex = 0;
 let score = 0;
-let selectedOption = null;
+let selected = null;
 
-// 要素の取得
-const furiganaEl = document.getElementById('furigana');
-const kanjiEl = document.getElementById('kanji');
+const kanjiText = document.getElementById('kanji');
+const furiganaText = document.getElementById('furigana');
 const optionsGrid = document.getElementById('options-grid');
 const progressBar = document.getElementById('progress-bar');
 const actionBtn = document.getElementById('action-btn');
-const resultsArea = document.getElementById('results-area');
-const quizArea = document.getElementById('quiz-area');
-const restartBtn = document.getElementById('restart-btn');
 
-function initQuiz() {
-    quizArea.classList.remove('hidden');
-    resultsArea.classList.add('hidden');
-    currentQuestionIndex = 0;
+function init() {
+    currentIndex = 0;
     score = 0;
-    showQuestion();
+    render();
 }
 
-function showQuestion() {
-    selectedOption = null;
+function render() {
+    selected = null;
     actionBtn.disabled = true;
     actionBtn.textContent = "检查";
     
-    const question = quizData[currentQuestionIndex];
-    furiganaEl.textContent = question.furigana;
-    kanjiEl.textContent = question.kanji;
+    const q = quizData[currentIndex];
+    kanjiText.textContent = q.kanji;
+    furiganaText.textContent = q.furigana;
     
     optionsGrid.innerHTML = '';
-    question.options.forEach(option => {
+    q.options.forEach(opt => {
         const btn = document.createElement('button');
         btn.className = 'option-btn';
-        btn.textContent = option;
+        btn.textContent = opt;
         btn.onclick = () => {
             document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
             btn.classList.add('selected');
-            selectedOption = option;
+            selected = opt;
             actionBtn.disabled = false;
         };
         optionsGrid.appendChild(btn);
     });
-    updateProgress();
-}
-
-function updateProgress() {
-    const progress = (currentQuestionIndex / quizData.length) * 100;
+    
+    const progress = (currentIndex / quizData.length) * 100;
     progressBar.style.width = `${progress}%`;
 }
 
 actionBtn.onclick = () => {
-    if (selectedOption === quizData[currentQuestionIndex].correctAnswer) {
+    if (selected === quizData[currentIndex].correctAnswer) {
         score++;
     }
-    currentQuestionIndex++;
-    if (currentQuestionIndex < quizData.length) {
-        showQuestion();
+    currentIndex++;
+    if (currentIndex < quizData.length) {
+        render();
     } else {
-        showFinalResults();
+        finish();
     }
 };
 
-function showFinalResults() {
-    quizArea.classList.add('hidden');
-    resultsArea.classList.remove('hidden');
-    
+function finish() {
     const nextGroup = (currentGroup === 'adjectives') ? 'others' : 'adjectives';
     const nextLabel = (currentGroup === 'adjectives') ? '名詞・副詞・会話' : '形容詞';
-
-    resultsArea.innerHTML = `
-        <h2>学習完了！ ${score}/${quizData.length} 正解！</h2>
-        <img src="images/finish.png" style="width:200px; margin:20px;">
-        <button class="action-btn" onclick="changeRange('${currentGroup}')">再来一次</button>
-        <button class="action-btn" style="margin-top:10px; background:#58cc02" onclick="changeRange('${nextGroup}')">
-            挑战「${nextLabel}」
-        </button>
+    
+    document.getElementById('quiz-area').innerHTML = `
+        <div style="text-align:center; padding: 50px 20px;">
+            <h2 style="font-size: 24px; color: #58cc02;">学习完了！</h2>
+            <p style="font-size: 18px; margin: 20px 0;">${quizData.length}个单词中答对了 ${score}个。</p>
+            <button class="action-btn" style="margin-bottom: 10px;" onclick="location.reload()">再做一次</button>
+            <button class="action-btn" style="background:#58cc02; border-bottom: 4px solid #46a302;" onclick="swap('${nextGroup}')">挑战「${nextLabel}」</button>
+        </div>
     `;
 }
 
-window.changeRange = function(group) {
+window.swap = function(group) {
     currentGroup = group;
-    quizData = [...quizDataGroups[currentGroup]];
-    // 画面をリセットするために元に戻す
-    resultsArea.classList.add('hidden');
-    quizArea.classList.remove('hidden');
-    initQuiz();
+    quizData = [...quizDataGroups[group]];
+    location.href = location.href; // 簡易的に再読み込み（本当はもっとスマートにできますが、まずは確実に動くことを優先します）
 }
 
-initQuiz();
+init();
