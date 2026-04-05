@@ -1,4 +1,3 @@
-// データを2つのグループに分けます
 const quizDataGroups = {
     adjectives: [
         { id: 1, kanji: "ハンサム[な]", furigana: "ハンサム", options: ["英俊、帅气", "亲切", "有名", "漂亮"], correctAnswer: "英俊、帅气" },
@@ -22,17 +21,17 @@ const quizDataGroups = {
         { id: 19, kanji: "つめたい", furigana: "つめたい", options: ["冰、凉 (水、手等)", "冷 (天气)", "热", "辣"], correctAnswer: "冰、凉 (水、手等)" },
         { id: 20, kanji: "むずかしい", furigana: "むずかしい", options: ["难", "容易", "便宜", "贵"], correctAnswer: "难" },
         { id: 21, kanji: "やさしい", furigana: "やさしい", options: ["容易", "难", "低", "忙"], correctAnswer: "容易" },
-        { id: 22, kanji: "たかい", furigana: "たかい", options: ["贵、高", "便宜、低", "新", "长"], correctAnswer: "贵、高" },
+        { id: 22, kanji: "たかい", furigana: "たかい", options: ["贵、高", "便宜、低", "新", "長"], correctAnswer: "贵、高" },
         { id: 23, kanji: "やすい", furigana: "やすい", options: ["便宜", "贵", "容易", "有趣"], correctAnswer: "便宜" },
         { id: 24, kanji: "ひくい", furigana: "ひくい", options: ["低", "高", "短", "小"], correctAnswer: "低" },
         { id: 25, kanji: "おもしろい", furigana: "おもしろい", options: ["有趣", "好玩", "美味", "忙"], correctAnswer: "有趣" },
         { id: 26, kanji: "おいしい", furigana: "おいしい", options: ["美味、好吃", "难吃", "甜", "辣"], correctAnswer: "美味、好吃" },
         { id: 27, kanji: "いそがしい", furigana: "いそがしい", options: ["忙碌", "有空", "快乐", "累"], correctAnswer: "忙碌" },
         { id: 28, kanji: "たのしい", furigana: "たのしい", options: ["快乐、愉快", "忙碌", "有趣", "好"], correctAnswer: "快乐、愉快" },
-        { id: 29, kanji: "しろい", furigana: "しろい", options: ["白色的", "黑色的", "红色的", "蓝色的"], correctAnswer: "白色的" },
-        { id: 30, kanji: "くろい", furigana: "くろい", options: ["黑色的", "白色的", "蓝色的", "红色的"], correctAnswer: "黑色的" },
-        { id: 31, kanji: "あかい", furigana: "あかい", options: ["红色的", "蓝色的", "白色的", "黑色的"], correctAnswer: "红色的" },
-        { id: 32, kanji: "あおい", furigana: "あおい", options: ["蓝色的", "红色的", "白色的", "黑色的"], correctAnswer: "蓝色的" }
+        { id: 29, kanji: "しろい", furigana: "しろい", options: ["白色的", "黑色的", "红色の", "蓝色の"], correctAnswer: "白色的" },
+        { id: 30, kanji: "くろい", furigana: "くろい", options: ["黑色的", "白色の", "蓝色の", "红色の"], correctAnswer: "黑色的" },
+        { id: 31, kanji: "あかい", furigana: "あかい", options: ["红色の", "蓝色の", "白色の", "黑色の"], correctAnswer: "红色の" },
+        { id: 32, kanji: "あおい", furigana: "あおい", options: ["蓝色の", "红色の", "白色の", "黑色の"], correctAnswer: "蓝色の" }
     ],
     others: [
         { id: 1, kanji: "さくら", furigana: "さくら", options: ["樱花", "梅花", "桃花", "菊花"], correctAnswer: "樱花" },
@@ -51,101 +50,105 @@ const quizDataGroups = {
         { id: 14, kanji: "そして", furigana: "そして", options: ["而且、然后", "但是", "所以", "因为"], correctAnswer: "而且、然后" },
         { id: 15, kanji: "〜が、〜", furigana: "〜が、〜", options: ["〜，但是〜", "〜，しかも〜", "〜，だから〜", "〜，それから〜"], correctAnswer: "〜，但是〜" },
         { id: 16, kanji: "お元気ですか", furigana: "おげんきですか", options: ["你好吗？", "再见", "对不起", "谢谢"], correctAnswer: "你好吗？" },
-        { id: 17, kanji: "そうですね", furigana: "そうですね", options: ["是啊（表示赞同）", "不是", "不知道", "为什么"], correctAnswer: "加えた贊同" },
-        { id: 18, kanji: "もう一杯いかがですか", furigana: "もういっぱい、いかがですか", options: ["再来一杯怎么样？", "好久不见", "我不吃了", "请进"], correctAnswer: "再来一杯怎么样？" },
-        { id: 19, kanji: "いいえ、けっこうです", furigana: "いいえ、けっこうです", options: ["不，不用了", "是的，请", "好的", "没关系"], correctAnswer: "不，不用了" },
-        { id: 20, kanji: "そろそろ失礼します", furigana: "そろそろ、しつれいします", options: ["我该告辞了", "初次见面", "谢谢", "请多关照"], correctAnswer: "我该告辞了" },
+        { id: 17, kanji: "そうですね", furigana: "そうですね", options: ["是啊（赞同）", "不是", "不知道", "为什么"], correctAnswer: "是啊（赞同）" },
+        { id: 18, kanji: "もう一杯いかがですか", furigana: "いかがですか", options: ["再来一杯怎么样？", "好久不见", "我不吃了", "请进"], correctAnswer: "再来一杯怎么样？" },
+        { id: 19, kanji: "いいえ、けっこうです", furigana: "けっこうです", options: ["不，不用了", "是的，请", "好的", "没关系"], correctAnswer: "不，不用了" },
+        { id: 20, kanji: "そろそろ失礼します", furigana: "しつれいします", options: ["我该告辞了", "初次见面", "谢谢", "请多关照"], correctAnswer: "我该告辞了" },
         { id: 21, kanji: "いいえ", furigana: "いいえ", options: ["不、没什么", "是的", "请", "谢谢"], correctAnswer: "不、没什么" },
-        { id: 22, kanji: "またいらっしゃってください", furigana: "また、いらっしゃってください", options: ["欢迎下次再来", "请进", "请慢用", "告辞了"], correctAnswer: "欢迎下次再来" }
+        { id: 22, kanji: "またいらっしゃってください", furigana: "いらっしゃってください", options: ["欢迎下次再来", "请进", "请慢用", "告辞了"], correctAnswer: "欢迎下次再来" }
     ]
 };
 
-// ----------------------------------------------------
-// ここから下は「仕組み」の部分です（以前と少し変わります）
-// ----------------------------------------------------
-
-let currentGroup = 'adjectives'; // 最初は形容詞を表示
-let quizData = [...quizDataGroups[currentGroup]]; 
+let currentGroup = 'adjectives';
+let quizData = [...quizDataGroups[currentGroup]];
 let currentQuestionIndex = 0;
 let score = 0;
+let selectedOption = null;
 
-// 問題を表示する関数
+// 要素の取得
+const furiganaEl = document.getElementById('furigana');
+const kanjiEl = document.getElementById('kanji');
+const optionsGrid = document.getElementById('options-grid');
+const progressBar = document.getElementById('progress-bar');
+const actionBtn = document.getElementById('action-btn');
+const resultsArea = document.getElementById('results-area');
+const quizArea = document.getElementById('quiz-area');
+const restartBtn = document.getElementById('restart-btn');
+
+function initQuiz() {
+    quizArea.classList.remove('hidden');
+    resultsArea.classList.add('hidden');
+    currentQuestionIndex = 0;
+    score = 0;
+    showQuestion();
+}
+
 function showQuestion() {
+    selectedOption = null;
+    actionBtn.disabled = true;
+    actionBtn.textContent = "检查";
+    
     const question = quizData[currentQuestionIndex];
-    document.getElementById('kanji').textContent = question.kanji;
-    document.getElementById('furigana').textContent = question.furigana;
+    furiganaEl.textContent = question.furigana;
+    kanjiEl.textContent = question.kanji;
     
-    const optionsContainer = document.getElementById('options');
-    optionsContainer.innerHTML = '';
-    
+    optionsGrid.innerHTML = '';
     question.options.forEach(option => {
-        const button = document.createElement('button');
-        button.textContent = option;
-        button.onclick = () => checkAnswer(option);
-        optionsContainer.appendChild(button);
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.textContent = option;
+        btn.onclick = () => {
+            document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            selectedOption = option;
+            actionBtn.disabled = false;
+        };
+        optionsGrid.appendChild(btn);
     });
-
     updateProgress();
 }
 
-// 答え合わせ
-function checkAnswer(selectedOption) {
-    const question = quizData[currentQuestionIndex];
-    if (selectedOption === question.correctAnswer) {
+function updateProgress() {
+    const progress = (currentQuestionIndex / quizData.length) * 100;
+    progressBar.style.width = `${progress}%`;
+}
+
+actionBtn.onclick = () => {
+    if (selectedOption === quizData[currentQuestionIndex].correctAnswer) {
         score++;
-        playCorrectSound();
-    } else {
-        playWrongSound();
     }
-    
     currentQuestionIndex++;
     if (currentQuestionIndex < quizData.length) {
         showQuestion();
     } else {
-        showResult();
+        showFinalResults();
     }
-}
+};
 
-// プログレスバー更新
-function updateProgress() {
-    const progress = (currentQuestionIndex / quizData.length) * 100;
-    document.getElementById('progress').style.width = `${progress}%`;
-}
-
-// 結果表示（ここに「切り替えボタン」を追加しています）
-function showResult() {
+function showFinalResults() {
+    quizArea.classList.add('hidden');
+    resultsArea.classList.remove('hidden');
+    
     const nextGroup = (currentGroup === 'adjectives') ? 'others' : 'adjectives';
     const nextLabel = (currentGroup === 'adjectives') ? '名詞・副詞・会話' : '形容詞';
 
-    document.getElementById('quiz-container').innerHTML = `
-        <h2>結果発表</h2>
-        <p>${quizData.length}問中 ${score}問正解！</p>
-        <button onclick="restartQuiz('${currentGroup}')">もう一度（同じ範囲）</button>
-        <button onclick="restartQuiz('${nextGroup}')">次は「${nextLabel}」に挑戦！</button>
+    resultsArea.innerHTML = `
+        <h2>学習完了！ ${score}/${quizData.length} 正解！</h2>
+        <img src="images/finish.png" style="width:200px; margin:20px;">
+        <button class="action-btn" onclick="changeRange('${currentGroup}')">再来一次</button>
+        <button class="action-btn" style="margin-top:10px; background:#58cc02" onclick="changeRange('${nextGroup}')">
+            挑战「${nextLabel}」
+        </button>
     `;
 }
 
-// クイズを再起動（範囲を選べるようにした）
-function restartQuiz(group) {
+window.changeRange = function(group) {
     currentGroup = group;
     quizData = [...quizDataGroups[currentGroup]];
-    currentQuestionIndex = 0;
-    score = 0;
-    
-    // 画面を元のレイアウトに戻す
-    document.getElementById('quiz-container').innerHTML = `
-        <div class="progress-container"><div id="progress" class="progress"></div></div>
-        <div class="quiz-box">
-            <div id="furigana" class="furigana"></div>
-            <div id="kanji" class="kanji"></div>
-            <div id="options" class="options"></div>
-        </div>
-    `;
-    showQuestion();
+    // 画面をリセットするために元に戻す
+    resultsArea.classList.add('hidden');
+    quizArea.classList.remove('hidden');
+    initQuiz();
 }
 
-function playCorrectSound() { new Audio('sounds/correct.mp3').play(); }
-function playWrongSound() { new Audio('sounds/wrong.mp3').play(); }
-
-// 最初の起動
-showQuestion();
+initQuiz();
