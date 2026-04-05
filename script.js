@@ -28,10 +28,10 @@ const quizDataGroups = {
         { id: 26, kanji: "おいしい", furigana: "おいしい", options: ["美味、好吃", "难吃", "甜", "辣"], correctAnswer: "美味、好吃" },
         { id: 27, kanji: "いそがしい", furigana: "いそがしい", options: ["忙碌", "有空", "快乐", "累"], correctAnswer: "忙碌" },
         { id: 28, kanji: "たのしい", furigana: "たのしい", options: ["快乐、愉快", "忙碌", "有趣", "好"], correctAnswer: "快乐、愉快" },
-        { id: 29, kanji: "しろい", furigana: "しろい", options: ["白色的", "黑色的", "红色の", "蓝色の"], correctAnswer: "白色的" },
-        { id: 30, kanji: "くろい", furigana: "くろい", options: ["黑色的", "白色の", "蓝色の", "红色の"], correctAnswer: "黑色的" },
-        { id: 31, kanji: "あかい", furigana: "あかい", options: ["红色の", "蓝色の", "白色の", "黑色の"], correctAnswer: "红色の" },
-        { id: 32, kanji: "あおい", furigana: "あおい", options: ["蓝色の", "红色の", "白色の", "黑色の"], correctAnswer: "蓝色の" }
+        { id: 29, kanji: "しろい", furigana: "しろい", options: ["白色の", "黑色の", "红色", "蓝色"], correctAnswer: "白色の" },
+        { id: 30, kanji: "くろい", furigana: "くろい", options: ["黑色の", "白色", "蓝色", "红色"], correctAnswer: "黑色の" },
+        { id: 31, kanji: "あかい", furigana: "あかい", options: ["红色", "蓝色", "白色", "黑色"], correctAnswer: "红色" },
+        { id: 32, kanji: "あおい", furigana: "あおい", options: ["蓝色", "红色", "白色", "黑色"], correctAnswer: "蓝色" }
     ],
     others: [
         { id: 1, kanji: "さくら", furigana: "さくら", options: ["樱花", "梅花", "桃花", "菊花"], correctAnswer: "樱花" },
@@ -47,10 +47,10 @@ const quizDataGroups = {
         { id: 11, kanji: "どんな〜", furigana: "どんな", options: ["什么样的", "怎么样", "哪个", "谁の"], correctAnswer: "什么样的" },
         { id: 12, kanji: "とても", furigana: "とても", options: ["非常、很", "不怎么", "稍微", "总是"], correctAnswer: "非常、很" },
         { id: 13, kanji: "あまり", furigana: "あまり", options: ["不怎么（与否定连用）", "非常", "总是", "有时候"], correctAnswer: "不怎么（与否定连用）" },
-        { id: 14, kanji: "そして", furigana: "そして", options: ["而且、然后", "但是", "所以", "因为"], correctAnswer: "而且、然后" },
+        { id: 14, kanji: "そして", furigana: "そして", options: ["而且、然后", "但是", "所以", "因为"], correctAnswer: "しかも・それから" },
         { id: 15, kanji: "〜が、〜", furigana: "〜が、〜", options: ["〜，但是〜", "〜，而且〜", "〜，所以〜", "〜，然后〜"], correctAnswer: "〜，但是〜" },
         { id: 16, kanji: "お元気ですか", furigana: "おげんきですか", options: ["你好吗？", "再见", "对不起", "谢谢"], correctAnswer: "你好吗？" },
-        { id: 17, kanji: "そうですね", furigana: "そうですね", options: ["是啊（赞同）", "不是", "不知道", "为什么"], correctAnswer: "はあ（赞同）" },
+        { id: 17, kanji: "そうですね", furigana: "そうですね", options: ["是啊（赞同）", "不是", "不知道", "为什么"], correctAnswer: "是啊（赞同）" },
         { id: 18, kanji: "もう一杯いかがですか", furigana: "いかがですか", options: ["再来一杯怎么样？", "好久不见", "我不吃了", "请进"], correctAnswer: "再来一杯怎么样？" },
         { id: 19, kanji: "いいえ、けっこうです", furigana: "けっけうです", options: ["不，不用了", "是的，请", "好的", "没关系"], correctAnswer: "不，不用了" },
         { id: 20, kanji: "そろそろ失礼します", furigana: "しつれいします", options: ["我该告辞了", "初次见面", "谢谢", "请多关照"], correctAnswer: "我该告辞了" },
@@ -60,7 +60,7 @@ const quizDataGroups = {
 };
 
 // -------------------------------------------------------------------
-// HTMLのIDに合わせて正確に設定
+// メインロジック
 // -------------------------------------------------------------------
 let currentGroup = 'adjectives';
 let quizData = [...quizDataGroups[currentGroup]];
@@ -73,6 +73,16 @@ const furiganaText = document.getElementById('furigana');
 const optionsGrid = document.getElementById('options-grid');
 const progressBar = document.getElementById('progress-bar');
 const actionBtn = document.getElementById('action-btn');
+
+// 音声再生用の関数
+function playSound(isCorrect) {
+    const soundId = isCorrect ? 'correct-sound' : 'wrong-sound';
+    const sound = document.getElementById(soundId);
+    if (sound) {
+        sound.currentTime = 0; // 最初から再生
+        sound.play().catch(e => console.log("Audio play failed"));
+    }
+}
 
 function init() {
     currentIndex = 0;
@@ -108,9 +118,15 @@ function render() {
 }
 
 actionBtn.onclick = () => {
-    if (selected === quizData[currentIndex].correctAnswer) {
+    // 答え合わせの時に音を鳴らす
+    const isCorrect = (selected === quizData[currentIndex].correctAnswer);
+    if (isCorrect) {
         score++;
+        playSound(true);
+    } else {
+        playSound(false);
     }
+
     currentIndex++;
     if (currentIndex < quizData.length) {
         render();
@@ -134,9 +150,17 @@ function finish() {
 }
 
 window.swap = function(group) {
-    currentGroup = group;
-    quizData = [...quizDataGroups[group]];
-    location.href = location.href; // 簡易的に再読み込み（本当はもっとスマートにできますが、まずは確実に動くことを優先します）
+    // グループ名を保存して再読み込み（次の範囲を表示するため）
+    localStorage.setItem('selectedGroup', group);
+    location.reload();
+}
+
+// 読み込み時にグループを確認
+const savedGroup = localStorage.getItem('selectedGroup');
+if (savedGroup) {
+    currentGroup = savedGroup;
+    quizData = [...quizDataGroups[currentGroup]];
+    localStorage.removeItem('selectedGroup'); // 使い終わったら消す
 }
 
 init();
