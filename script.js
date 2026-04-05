@@ -33,7 +33,8 @@ adjectives: [
         { id: 30, kanji: "黒い（くろい）", furigana: "くろい", options: ["黑色", "白色", "蓝色", "红色"], correctAnswer: "黑色" },
         { id: 31, kanji: "赤い（あかい）", furigana: "あかい", options: ["红色", "蓝色", "白色", "黑色"], correctAnswer: "红色" },
         { id: 32, kanji: "青い（あおい）", furigana: "あおい", options: ["蓝色", "红色", "白色", "黑色"], correctAnswer: "蓝色" }
-    others: [
+],
+        others: [
         { id: 1, kanji: "さくら", furigana: "さくら", options: ["樱花", "梅花", "桃花", "菊花"], correctAnswer: "樱花" },
         { id: 2, kanji: "やま", furigana: "やま", options: ["山", "川", "海", "空"], correctAnswer: "山" },
         { id: 3, kanji: "まち", furigana: "まち", options: ["城镇、街道", "村庄", "家", "学校"], correctAnswer: "城镇、街道" },
