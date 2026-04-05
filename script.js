@@ -28,8 +28,8 @@ const quizDataGroups = {
         { id: 26, kanji: "おいしい", furigana: "おいしい", options: ["美味、好吃", "难吃", "甜", "辣"], correctAnswer: "美味、好吃" },
         { id: 27, kanji: "いそがしい", furigana: "いそがしい", options: ["忙碌", "有空", "快乐", "累"], correctAnswer: "忙碌" },
         { id: 28, kanji: "たのしい", furigana: "たのしい", options: ["快乐、愉快", "忙碌", "有趣", "好"], correctAnswer: "快乐、愉快" },
-        { id: 29, kanji: "しろい", furigana: "しろい", options: ["白色の", "黑色の", "红色", "蓝色"], correctAnswer: "白色の" },
-        { id: 30, kanji: "くろい", furigana: "くろい", options: ["黑色の", "白色", "蓝色", "红色"], correctAnswer: "黑色の" },
+        { id: 29, kanji: "しろい", furigana: "しろい", options: ["白色", "黑色", "红色", "蓝色"], correctAnswer: "白色" },
+        { id: 30, kanji: "くろい", furigana: "くろい", options: ["黑色", "白色", "蓝色", "红色"], correctAnswer: "黑色" },
         { id: 31, kanji: "あかい", furigana: "あかい", options: ["红色", "蓝色", "白色", "黑色"], correctAnswer: "红色" },
         { id: 32, kanji: "あおい", furigana: "あおい", options: ["蓝色", "红色", "白色", "黑色"], correctAnswer: "蓝色" }
     ],
@@ -47,11 +47,11 @@ const quizDataGroups = {
         { id: 11, kanji: "どんな〜", furigana: "どんな", options: ["什么样的", "怎么样", "哪个", "谁の"], correctAnswer: "什么样的" },
         { id: 12, kanji: "とても", furigana: "とても", options: ["非常、很", "不怎么", "稍微", "总是"], correctAnswer: "非常、很" },
         { id: 13, kanji: "あまり", furigana: "あまり", options: ["不怎么（与否定连用）", "非常", "总是", "有时候"], correctAnswer: "不怎么（与否定连用）" },
-        { id: 14, kanji: "そして", furigana: "そして", options: ["而且、然后", "但是", "所以", "因为"], correctAnswer: "而且、然后" },
+        { id: 14, kanji: "そして", furigana: "そして", options: ["しかも・それから", "但是", "所以", "因为"], correctAnswer: "しかも・それから" },
         { id: 15, kanji: "〜が、〜", furigana: "〜が、〜", options: ["〜，但是〜", "〜，而且〜", "〜，所以〜", "〜，然后〜"], correctAnswer: "〜，但是〜" },
         { id: 16, kanji: "お元気ですか", furigana: "おげんきですか", options: ["你好吗？", "再见", "对不起", "谢谢"], correctAnswer: "你好吗？" },
-        { id: 17, kanji: "そうですね", furigana: "そうですね", options: ["是啊（赞同）", "不是", "不知道", "为什么"], correctAnswer: "是啊（赞同）" },
-        { id: 18, kanji: "もう一杯いかがですか", furigana: "いかがですか", options: ["再来一杯怎么样？", "好久不见", "我不吃了", "请进"], correctAnswer: "再来一杯怎么样？" },
+        { id: 17, kanji: "そうですね", furigana: "そうですね", options: ["是啊（赞同）", "不是", "不知道", "为什么"], correctAnswer: "はあ（赞同）" },
+        { id: 18, kanji: "もう一杯いかがですか", furigana: "いかがですか", options: ["再来一杯怎么样？", "好久不见", "我不吃了", "请進"], correctAnswer: "再来一杯怎么样？" },
         { id: 19, kanji: "いいえ、けっこうです", furigana: "けっけうです", options: ["不，不用了", "是的，请", "好的", "没关系"], correctAnswer: "不，不用了" },
         { id: 20, kanji: "そろそろ失礼します", furigana: "しつれいします", options: ["我该告辞了", "初次见面", "谢谢", "请多关照"], correctAnswer: "我该告辞了" },
         { id: 21, kanji: "いいえ", furigana: "いいえ", options: ["不、没什么", "是的", "请", "谢谢"], correctAnswer: "不、没什么" },
@@ -70,11 +70,20 @@ const furiganaText = document.getElementById('furigana');
 const optionsGrid = document.getElementById('options-grid');
 const progressBar = document.getElementById('progress-bar');
 const actionBtn = document.getElementById('action-btn');
+const audioBtn = document.getElementById('audio-btn');
 
-// 音声をファイルから直接生成して再生する関数
+// --- 読み上げ機能 ---
+function speak(text) {
+    window.speechSynthesis.cancel(); // 前の音声を止める
+    const uttr = new SpeechSynthesisUtterance(text);
+    uttr.lang = 'ja-JP';
+    window.speechSynthesis.speak(uttr);
+}
+
+// --- 効果音再生 ---
 function playAudio(fileName) {
     const audio = new Audio(`sounds/${fileName}.mp3`);
-    audio.play().catch(e => console.log("再生エラー:", e));
+    audio.play().catch(e => console.log("SE再生エラー:", e));
 }
 
 function init() {
@@ -91,6 +100,9 @@ function render() {
     const q = quizData[currentIndex];
     kanjiText.textContent = q.kanji;
     furiganaText.textContent = q.furigana;
+    
+    // 【自動読み上げ】問題が出た時に喋る
+    speak(q.furigana);
     
     optionsGrid.innerHTML = '';
     q.options.forEach(opt => {
@@ -110,12 +122,19 @@ function render() {
     progressBar.style.width = `${progress}%`;
 }
 
+// 【スピーカーボタン】押した時に喋る
+if (audioBtn) {
+    audioBtn.onclick = () => {
+        speak(quizData[currentIndex].furigana);
+    };
+}
+
 actionBtn.onclick = () => {
     if (selected === quizData[currentIndex].correctAnswer) {
         score++;
-        playAudio('correct'); // correct.mp3を再生
+        playAudio('correct');
     } else {
-        playAudio('wrong');   // wrong.mp3を再生
+        playAudio('wrong');
     }
 
     currentIndex++;
