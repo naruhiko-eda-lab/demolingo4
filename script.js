@@ -48,7 +48,7 @@ adjectives: [
         { id: 11, kanji: "どんな〜", furigana: "どんな", options: ["什么样的", "怎么样", "哪个", "谁の"], correctAnswer: "什么样的" },
         { id: 12, kanji: "とても", furigana: "とても", options: ["非常、很", "不怎么", "稍微", "总是"], correctAnswer: "非常、很" },
         { id: 13, kanji: "あまり", furigana: "あまり", options: ["不怎么（与否定连用）", "非常", "总是", "有时候"], correctAnswer: "不怎么（与否定连用）" },
-        { id: 14, kanji: "そして", furigana: "そして", options: ["而且、然后", "但是", "所以", "因为"], correctAnswer: "而且、然后" },
+        { id: 14, kanji: "そして", furigana: "そして", options: ["而且、然后、于是", "但是", "所以", "因为"], correctAnswer: "而且、然后、于是" },
         { id: 15, kanji: "〜が、〜", furigana: "〜が、〜", options: ["〜，但是〜", "所以", "因为", "即使，～也"], correctAnswer: "〜，但是〜" },
         { id: 16, kanji: "お元気ですか", furigana: "おげんきですか", options: ["你好吗？", "再见", "对不起", "谢谢"], correctAnswer: "你好吗？" },
         { id: 17, kanji: "そうですね", furigana: "そうですね", options: ["是啊（赞同）", "不是", "不知道", "为什么"], correctAnswer: "是啊（赞同）" },
