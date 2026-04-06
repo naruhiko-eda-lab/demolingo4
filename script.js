@@ -203,7 +203,7 @@ function showBreakScreen() {
     state = 'break';
     elements.optionsGrid.innerHTML = ''; 
     elements.kanji.textContent = "休憩時間";
-    elements.furigana.textContent = "加油！加油！";
+    elements.furigana.textContent = "きゅうけいじかん";
     const feedbackImg = document.getElementById('feedback-img');
     if (feedbackImg) feedbackImg.src = 'images/break.png';
     elements.feedbackTitle.textContent = "おつかれさま！ちょっとひと休み。";
