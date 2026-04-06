@@ -213,19 +213,28 @@ function showBreakScreen() {
 function showFinalResult() {
     state = 'finished';
     elements.optionsGrid.innerHTML = '';
+    
+    // 画面中央のメインテキストを更新
     elements.kanji.textContent = "🎉 学習完了！";
     elements.furigana.textContent = `正解数: ${score} / ${quizData.length}`;
     
+    // 次の学習範囲（トグル）の設定
     const nextGroup = (currentGroupName === 'adjectives') ? 'others' : 'adjectives';
     const nextLabel = (currentGroupName === 'adjectives') ? '名詞・副詞・会話' : '形容詞';
 
+    // ★ ここで画像（finish.png）と「次はこれに挑戦」ボタンを表示します
+    // ※もし画像が jpg なら、下の finish.png を finish.jpg に書き換えてください
     elements.feedbackTitle.innerHTML = `
-        お疲れ様でした！<br>
-        <button class="action-btn" style="margin-top:20px; background:#58cc02; border-bottom: 4px solid #46a302;" onclick="swapRange('${nextGroup}')">
-            次は「${nextLabel}」に挑戦
-        </button>
+        <div style="text-align:center;">
+            <img id="result-main-img" src="images/finish.png" alt="congrats" style="width: 200px; height: auto; display: block; margin: 10px auto; border-radius: 10px;">
+            <p>お疲れ様でした！</p>
+            <button class="action-btn" style="margin-top:20px; background:#58cc02; border-bottom: 4px solid #46a302; cursor: pointer;" onclick="swapRange('${nextGroup}')">
+                次は「${nextLabel}」に挑戦
+            </button>
+        </div>
     `;
     
+    // 下部のメインボタンの設定（解き直し or 最初から）
     if (missedQuestions.length > 0) {
         elements.actionBtn.textContent = `間違えた ${missedQuestions.length} 問を解き直す`;
         elements.actionBtn.onclick = () => retryMissedQuestions();
@@ -236,7 +245,10 @@ function showFinalResult() {
             location.reload();
         };
     }
+    
+    // フィードバックエリアを表示
     elements.feedbackContainer.classList.remove('hidden');
+    elements.actionBtn.disabled = false;
 }
 
 window.swapRange = function(group) {
