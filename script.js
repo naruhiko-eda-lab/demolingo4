@@ -304,7 +304,7 @@ function init() {
 
     elements.audioBtn.addEventListener('click', () => {
         initAudio();
-        const text = (state === 'break') ? "加油！加油！" : quizData[currentIndex].furigana;
+        const text = (state === 'break') ? "きゅうけいじかん" : quizData[currentIndex].furigana;
         speakText(text, 'ja-JP');
     });
 }
