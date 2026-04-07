@@ -45,7 +45,7 @@ adjectives: [
         { id: 8, kanji: "せいかつ", furigana: "せいかつ", options: ["生活", "工作", "学習", "旅行"], correctAnswer: "生活" },
         { id: 9, kanji: "[お]しごと", furigana: "しごと", options: ["工作、职业", "生活", "趣味", "运动"], correctAnswer: "工作、职业" },
         { id: 10, kanji: "どう", furigana: "どう", options: ["怎么样", "什么样的", "哪个", "为什么"], correctAnswer: "怎么样" },
-        { id: 11, kanji: "どんな〜", furigana: "どんな", options: ["什么样的", "怎么样", "哪个", "谁の"], correctAnswer: "什么样的" },
+        { id: 11, kanji: "どんな〜", furigana: "どんな", options: ["什么样的", "怎么样", "哪个", "谁的"], correctAnswer: "什么样的" },
         { id: 12, kanji: "とても", furigana: "とても", options: ["非常、很", "不怎么", "稍微", "总是"], correctAnswer: "非常、很" },
         { id: 13, kanji: "あまり", furigana: "あまり", options: ["不怎么（与否定连用）", "非常", "总是", "有时候"], correctAnswer: "不怎么（与否定连用）" },
         { id: 14, kanji: "そして", furigana: "そして", options: ["而且、然后、于是", "但是", "所以", "因为"], correctAnswer: "而且、然后、于是" },
