@@ -177,7 +177,7 @@ function checkAnswer() {
         elements.feedbackCorrectAnswer.querySelector('span').textContent = question.correctAnswer;
         elements.feedbackCorrectAnswer.classList.remove('hidden');
         if (feedbackImg) feedbackImg.src = 'images/incorrect.png';
-        new Audio('sounds/wrong.mp3').play().catch(() => {});
+        new Audio('sounds/incorrect.mp3').play().catch(() => {});
     }
 }
 
