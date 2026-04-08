@@ -10,7 +10,7 @@ adjectives: [
         { id: 7, kanji: "元気[な]（げんき）", furigana: "げんき", options: ["健康、有精神", "亲切", "暇", "有名"], correctAnswer: "健康、有精神" },
         { id: 8, kanji: "暇[な]（ひま）", furigana: "ひま", options: ["有空、闲暇", "忙碌", "方便", "特別"], correctAnswer: "有空、闲暇" },
         { id: 9, kanji: "便利[な]（べんり）", furigana: "べんり", options: ["方便", "便宜", "特別", "漂亮"], correctAnswer: "方便" },
-        { id: 10, kanji: "素敵[な]（すてき）", furigana: "すてき", options: ["极好、极漂亮", "有名", "亲切", "精神"], correctAnswer: "极好、极漂亮" },
+        { id: 10, kanji: "素敵[な]（すてき）", furigana: "すてき", options: ["特别好", "有名", "亲切", "精神"], correctAnswer: "特别好" },
         { id: 11, kanji: "大きい（おおきい）", furigana: "おおきい", options: ["大", "小", "多", "少"], correctAnswer: "大" },
         { id: 12, kanji: "小さい（ちいさい）", furigana: "ちいさい", options: ["小", "大", "新", "旧"], correctAnswer: "小" },
         { id: 13, kanji: "新しい（あたらしい）", furigana: "あたらしい", options: ["新", "旧", "好", "坏"], correctAnswer: "新" },
